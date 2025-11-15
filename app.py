@@ -1,6 +1,6 @@
 import random
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import or_, and_
+from sqlalchemy import or_, and_, not_
 from models import User, engine
 
 Session = sessionmaker(bind=engine)
@@ -121,10 +121,29 @@ for user in users:
 
 
 # users = session.query(User).where(or_(User.age>=45, User.name=='Iron Man')).all() # This is equivalent to using OR operator
-users = session.query(User).where((User.age>=45) | (User.name=='Iron Man')).all() # This is equivalent to using OR operator
+# users = session.query(User).where((User.age>=45) | (User.name=='Iron Man')).all() # This is equivalent to using OR operator
+
+# for user in users:
+#     print(f'User id:{user.id}, name: {user.name}, age: {user.age}')
+
+#  Using NOT operator
+
+# users = session.query(User).where(not_(User.name=='Jane Doe')).all()
+# for user in users:
+#     print(f'User id:{user.id}, name: {user.name}, age: {user.age}')
+
+
+users = (
+    session.query(User).where(
+        and_(
+        not_(User.name == "Jane Doe"),
+        and_(User.age > 35, 
+             User.age < 60
+    )
+        )
+                              )
+).all()
 
 for user in users:
     print(f'User id:{user.id}, name: {user.name}, age: {user.age}')
-
-
 
