@@ -1,6 +1,6 @@
 import random
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import or_, and_, not_
+from sqlalchemy import or_, and_, not_, func
 from models import User, engine
 
 Session = sessionmaker(bind=engine)
@@ -133,6 +133,7 @@ for user in users:
 #     print(f'User id:{user.id}, name: {user.name}, age: {user.age}')
 
 
+"""
 users = (
     session.query(User).where(
         and_(
@@ -147,3 +148,83 @@ users = (
 for user in users:
     print(f'User id:{user.id}, name: {user.name}, age: {user.age}')
 
+
+"""
+
+# Python SQLAlchemy ORM - Grouping and Chaining
+
+# group users by age using func - function from sqlalchemy
+
+# users = session.query(User.age, func.count(User.id)).group_by(User.age).all()
+
+"""
+users = session.query(User.name, func.count(User.id)).group_by(User.name).all()
+
+name_count = 0
+common_name =""
+for name, value in users:
+    
+    if value > name_count:
+        name_count = value
+        common_name = name
+    
+    if value == 1:
+        print(f"There is {value} person called {name}")
+    else:
+        print(f"There are {value} people are called {name}")
+
+print(f" The common name is {common_name}")
+
+
+
+"""
+
+# Chaining
+
+"""
+
+users = session.query(User).filter(User.age > 37).filter(User.age < 80).all()
+for user in users:
+    print(f'User id:{user.id}, name: {user.name}, age: {user.age}')
+
+"""
+    
+#  chaining multiple queries
+
+"""
+users_tuple = (
+    session.query(User.age, func.count(User.id))
+    .filter(User.age > 40)
+    .order_by(User.age)
+    .filter(User.age < 70)
+    .group_by(User.age)
+    .all()
+)
+
+
+for age, count in users_tuple:
+    print(f" Age: {age} - {count} users")
+    
+
+
+"""
+    
+# Using conditionals
+
+# only_iron_man = True
+only_iron_man = False
+group_by_age = True
+
+users = session.query(User)
+
+if only_iron_man:
+    users = users.filter(User.name == "Iron Man")
+
+if group_by_age:
+    
+    users.group_by(User.age)
+
+users = users.all()
+
+for user in users:
+    print(f"User age:{user.age}, name: {user.name}")
