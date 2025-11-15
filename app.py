@@ -1,7 +1,7 @@
 import random
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import or_, and_, not_, func
-from models import User, engine
+from models import User,Address, engine
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -212,6 +212,8 @@ for age, count in users_tuple:
 # Using conditionals
 
 # only_iron_man = True
+
+"""
 only_iron_man = False
 group_by_age = True
 
@@ -228,3 +230,65 @@ users = users.all()
 
 for user in users:
     print(f"User age:{user.age}, name: {user.name}")
+
+
+"""
+
+
+
+# data_set = [["", 0] for _ in range(10)]
+
+# for index in range(10):
+#     name = input("Enter a name: ")
+#     age = int(input('Enter age: '))
+#     data_set[index][0] = name
+#     data_set[index][1] = age
+        
+
+
+# print(data_set)
+
+
+
+#################################################
+
+# Python SQLAlchemy ORM - 1 to MANY Relationships
+
+################################################
+
+# create users from models file
+
+user_1 = User(name='John Moremi', age=28)
+user_2 = User(name='Mwiza Charles', age=26)
+user_3 = User(name='Magoso Lameck', age=30)
+
+# Create Addresses
+
+# address_1 = Address(city='Dar es Salaam', country='Tanzania', zip_code='+255')
+# address_2 = Address(city='Dodoma', country='Tanzania', zip_code='+200')
+# address_3 = Address(city='Tabora', country='Tanzania', zip_code='+120')
+
+# associate addresses with users
+
+# user_1.addresses.extend([address_1, address_2])
+# user_2.addresses.append(address_3)
+
+# Adding users and address to the session and committing changes to the database
+
+# Create following relationship
+
+user_1.following.append(user_2)
+user_2.following.append(user_1)
+user_3.following.append(user_2)
+
+session.add_all([user_1, user_2, user_3])
+session.commit()
+
+print(f"{user_1.following =}")
+
+# users = session.query(User).all();
+
+# for user in users:
+#     cities = [address.city for address in user.addresses]
+#     print(f"name: {user.name}, lives in {', '.join(cities)}")
+
